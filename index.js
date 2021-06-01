@@ -6,13 +6,13 @@ app.use(express.json());
 
 // hard coded genres
 const genres = [
-  { id: 1, genre: "Action" },
-  { id: 2, genre: "Horror" },
+  { id: 1, name: "Action" },
+  { id: 2, name: "Horror" },
 ];
 
 // Input validation schema
 const schema = Joi.object({
-  genre: Joi.string().min(3).required(),
+  name: Joi.string().min(3).required(),
 });
 
 //Get request handlers
@@ -45,10 +45,28 @@ app.post("/api/genres", (req, res) => {
 
   const genre = {
     id: genres.length + 1,
-    genre: req.body.genre,
+    name: req.body.name,
   };
 
   genres.push(genre);
+  res.send(genre);
+});
+
+// Put requests handlers
+app.put("/api/genres/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const genre = genres.find((element) => element.id === id);
+
+  if (!genre) {
+    return res.status(404).send("Genre with given id is not found.");
+  }
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).send(error.message);
+  }
+
+  Object.assign(genre, req.body);
   res.send(genre);
 });
 
