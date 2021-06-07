@@ -1,12 +1,6 @@
-const Joi = require("joi");
 const express = require("express");
 const router = express.Router();
-const Genre = require("../modules/genre");
-
-// Input validation schema
-const schema = Joi.object({
-  name: Joi.string().min(5).max(50).required(),
-});
+const { Genre, validate } = require("../models/genre");
 
 // Get request handlers
 router.get("/", async (req, res) => {
@@ -36,7 +30,7 @@ router.get("/:id", async (req, res) => {
 
 // Post request handlers
 router.post("/", async (req, res) => {
-  const { error } = schema.validate(req.body);
+  const { error } = validate(req.body);
 
   if (error) {
     return res.status(400).send(error.message);
@@ -57,7 +51,7 @@ router.post("/", async (req, res) => {
 
 // Put requests handlers
 router.put("/:id", async (req, res) => {
-  const { error } = schema.validate(req.body);
+  const { error } = validate(req.body);
   if (error) {
     return res.status(400).send(error.message);
   }
