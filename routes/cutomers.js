@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { Customer, validate } = require("../models/customer");
+const {
+  Customer,
+  validateCustomer,
+  validateParams,
+} = require("../models/customer");
 
 // Get route handlers
 router.get("/", async (req, res) => {
@@ -14,6 +18,11 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  const { error } = validateParams(req.params);
+  if (error) {
+    return res.status(400).send(error.message);
+  }
+
   try {
     const customer = await Customer.findById(req.params.id);
 
@@ -30,7 +39,7 @@ router.get("/:id", async (req, res) => {
 
 // Post route handlers
 router.post("/", async (req, res) => {
-  const { error } = validate(req.body);
+  const { error } = validateCustomer(req.body);
   if (error) {
     return res.status(400).send(error.message);
   }
@@ -50,9 +59,14 @@ router.post("/", async (req, res) => {
 
 // Put route handlers
 router.put("/:id", async (req, res) => {
-  const { error } = validate(req.body);
-  if (error) {
-    return res.status(400).send(error.message);
+  let result = validateParams(req.params);
+  if (result.error) {
+    return res.status(400).send(result.error.message);
+  }
+
+  result = validateCustomer(req.body);
+  if (result.error) {
+    return res.status(400).send(result.error.message);
   }
 
   const id = req.params.id;
@@ -81,9 +95,14 @@ router.put("/:id", async (req, res) => {
 
 // Delete route handler
 router.delete("/:id", async (req, res) => {
+  const { error } = validateParams(req.params);
+  if (error) {
+    return res.status(400).send(error.message);
+  }
+
   const id = req.params.id;
   try {
-    const customer = Customer.findByIdAndRemove(id);
+    const customer = await Customer.findByIdAndRemove(id);
     if (!customer) {
       return res.status(404).send("Customer with given ID is not found!");
     }
