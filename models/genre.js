@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-Joi.objectId = require("joi-objectid")(Joi);
 
 const genreSchema = mongoose.Schema({
   name: {
@@ -18,12 +17,11 @@ const schema = Joi.object({
   name: Joi.string().min(5).max(50).required(),
 });
 
-// Parameters validation schema
-
 function validateGenre(genre) {
   return schema.validate(genre);
 }
 
+// Parameters validation schema
 const paramSchema = Joi.object({
   id: Joi.objectId().required(),
 });

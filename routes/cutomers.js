@@ -44,12 +44,12 @@ router.post("/", async (req, res) => {
     return res.status(400).send(error.message);
   }
 
-  let customer = new Customer({
+  const customer = new Customer({
     ...req.body,
   });
 
   try {
-    customer = await customer.save();
+    await customer.save();
     res.send(customer);
   } catch (e) {
     console.log("Error", e.message);
