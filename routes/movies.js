@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { Movie, validateMovie, validateParams } = require("../models/movie");
 const { Genre } = require("../models/genre");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 // Get router handlers
 router.get("/", async (req, res) => {
@@ -36,7 +38,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Post route handler
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateMovie(req.body);
 
   if (error) {
@@ -69,7 +71,7 @@ router.post("/", async (req, res) => {
 });
 
 // Put route handler
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   let result = validateParams(req.params);
   if (result.error) {
     return res.status(400).send(result.error.message);
@@ -116,7 +118,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete route handler
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { error } = validateParams(req.params);
 
   if (error) {

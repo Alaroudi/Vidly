@@ -4,6 +4,7 @@ const { Rental, validateParams, validateRental } = require("../models/rental");
 const { Customer } = require("../models/customer");
 const { Movie } = require("../models/movie");
 const mongoose = require("mongoose");
+const auth = require("../middleware/auth");
 
 // Get route handlers
 router.get("/", async (req, res) => {
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   const { error } = validateParams(req.params);
 
   if (error) {
@@ -31,13 +32,12 @@ router.get("/:id", async (req, res) => {
 
     res.send(rental);
   } catch (e) {
-    console.log("Error:", e.message);
-    res.status(500).send(e.message);
+    next(e);
   }
 });
 
 // Post route handlers
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateRental(req.body);
   if (error) {
     return res.status(400).send(error.message);
@@ -110,7 +110,7 @@ router.post("/", async (req, res) => {
 });
 
 // Delete routed handler
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { error } = validateParams(req.params);
   if (error) {
     return res.status(400).send(error.message);

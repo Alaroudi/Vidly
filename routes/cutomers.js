@@ -1,4 +1,5 @@
 const express = require("express");
+const auth = require("../middleware/auth");
 const router = express.Router();
 const {
   Customer,
@@ -38,7 +39,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Post route handlers
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateCustomer(req.body);
   if (error) {
     return res.status(400).send(error.message);
@@ -58,7 +59,7 @@ router.post("/", async (req, res) => {
 });
 
 // Put route handlers
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   let result = validateParams(req.params);
   if (result.error) {
     return res.status(400).send(result.error.message);
@@ -94,7 +95,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete route handler
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { error } = validateParams(req.params);
   if (error) {
     return res.status(400).send(error.message);
