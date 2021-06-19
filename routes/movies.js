@@ -3,7 +3,6 @@ const router = express.Router();
 const { Movie, validateMovie, validateParams } = require("../models/movie");
 const { Genre } = require("../models/genre");
 const auth = require("../middleware/auth");
-const admin = require("../middleware/admin");
 
 // Get router handlers
 router.get("/", async (req, res) => {
@@ -86,7 +85,7 @@ router.put("/:id", auth, async (req, res) => {
   try {
     const genre = await Genre.findById(req.body.genreId);
     if (!genre) {
-      return resizeTo.status(404).send("Genre with the given id is not found");
+      return res.status(404).send("Genre with the given id is not found");
     }
 
     const movie = await Movie.findByIdAndUpdate(
