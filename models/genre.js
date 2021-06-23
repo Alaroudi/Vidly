@@ -21,16 +21,6 @@ function validateGenre(genre) {
   return schema.validate(genre);
 }
 
-// Parameters validation schema
-const paramSchema = Joi.object({
-  id: Joi.objectId().required(),
-});
-
-function validateParams(params) {
-  return paramSchema.validate(params);
-}
-
 module.exports.Genre = Genre;
 module.exports.validateGenre = validateGenre;
 module.exports.genreSchema = genreSchema;
-module.exports.validateParams = validateParams;

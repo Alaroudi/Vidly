@@ -43,14 +43,5 @@ function validateMovie(movie) {
   return schema.validate(movie);
 }
 
-// Parameter validation schema
-const paramSchema = Joi.object({
-  id: Joi.objectId().required(),
-});
-
-function validateParams(params) {
-  return paramSchema.validate(params);
-}
 module.exports.Movie = Movie;
 module.exports.validateMovie = validateMovie;
-module.exports.validateParams = validateParams;

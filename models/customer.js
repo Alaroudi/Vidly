@@ -33,15 +33,5 @@ function validateCustomer(customer) {
   return schema.validate(customer);
 }
 
-// Parameter validation schema
-const paramSchema = Joi.object({
-  id: Joi.objectId().required(),
-});
-
-function validateParams(params) {
-  return paramSchema.validate(params);
-}
-
 module.exports.Customer = Customer;
 module.exports.validateCustomer = validateCustomer;
-module.exports.validateParams = validateParams;

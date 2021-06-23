@@ -1,0 +1,6 @@
+{
+  "jwtPrivateKey": "1234",
+  "DB": "Vidly_Test",
+  "DB_USER": "",
+  "DB_PASS": ""
+}

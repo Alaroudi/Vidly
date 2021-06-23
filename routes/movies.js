@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { Movie, validateMovie, validateParams } = require("../models/movie");
+const { Movie, validateMovie } = require("../models/movie");
 const { Genre } = require("../models/genre");
 const auth = require("../middleware/auth");
+const validateId = require("../middleware/validateObjectId");
 
 // Get router handlers
 router.get("/", async (req, res) => {
@@ -10,13 +11,7 @@ router.get("/", async (req, res) => {
   res.send(movies);
 });
 
-router.get("/:id", async (req, res) => {
-  const { error } = validateParams(req.params);
-
-  if (error) {
-    return res.status(400).send(error.message);
-  }
-
+router.get("/:id", validateId, async (req, res) => {
   const id = req.params.id;
   const movie = await Movie.findById(id);
   if (!movie) {
@@ -55,13 +50,8 @@ router.post("/", auth, async (req, res) => {
 });
 
 // Put route handler
-router.put("/:id", auth, async (req, res) => {
-  let result = validateParams(req.params);
-  if (result.error) {
-    return res.status(400).send(result.error.message);
-  }
-
-  result = validateMovie(req.body);
+router.put("/:id", [validateId, auth], async (req, res) => {
+  const result = validateMovie(req.body);
   if (result.error) {
     return res.status(400).send(result.error.message);
   }
@@ -98,13 +88,7 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 // Delete route handler
-router.delete("/:id", auth, async (req, res) => {
-  const { error } = validateParams(req.params);
-
-  if (error) {
-    return res.status(400).send(error.message);
-  }
-
+router.delete("/:id", [validateId, auth], async (req, res) => {
   const movie = await Movie.findByIdAndRemove(req.params.id);
 
   if (!movie) {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi);
 
 const rentalSchema = mongoose.Schema({
   customer: {
@@ -75,15 +76,5 @@ function validateRental(movie) {
   return schema.validate(movie);
 }
 
-// Parameter validation schema
-const paramSchema = Joi.object({
-  id: Joi.objectId().required(),
-});
-
-function validateParams(params) {
-  return paramSchema.validate(params);
-}
-
 module.exports.Rental = Rental;
 module.exports.validateRental = validateRental;
-module.exports.validateParams = validateParams;

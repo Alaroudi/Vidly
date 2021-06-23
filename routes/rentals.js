@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { Rental, validateParams, validateRental } = require("../models/rental");
+const { Rental, validateRental } = require("../models/rental");
 const { Customer } = require("../models/customer");
 const { Movie } = require("../models/movie");
 const mongoose = require("mongoose");
 const auth = require("../middleware/auth");
-const winston = require("winston");
+const validateId = require("../middleware/validateObjectId");
 
 // Get route handlers
 router.get("/", async (req, res) => {
@@ -13,13 +13,7 @@ router.get("/", async (req, res) => {
   res.send(rentals);
 });
 
-router.get("/:id", async (req, res) => {
-  const { error } = validateParams(req.params);
-
-  if (error) {
-    return res.status(400).send(error.message);
-  }
-
+router.get("/:id", validateId, async (req, res) => {
   const rental = await Rental.findById(req.params.id);
   if (!rental) {
     return res.status(404).send("Rental with given id is not found.");
@@ -87,7 +81,7 @@ router.post("/", async (req, res) => {
       res.status(500).send("The transaction was intentionally aborted.");
     }
   } catch (e) {
-    winston.error("Transaction was aborted due to an unxpected error:", e);
+    console.error("Transaction was aborted due to an unxpected error:", e);
     res
       .status(500)
       .send("Transaction was aborted due to an unxpected \n" + e.message);
@@ -97,12 +91,7 @@ router.post("/", async (req, res) => {
 });
 
 // Delete routed handler
-router.delete("/:id", auth, async (req, res) => {
-  const { error } = validateParams(req.params);
-  if (error) {
-    return res.status(400).send(error.message);
-  }
-
+router.delete("/:id", [validateId, auth], async (req, res) => {
   const rental = await Rental.findByIdAndRemove(req.params.id);
   if (!rental) {
     return res.status(404).send("Rental with given ID is not found.");

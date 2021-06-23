@@ -1,6 +1,8 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 const router = express.Router();
+const validateId = require("../middleware/validateObjectId");
+
 const {
   Customer,
   validateCustomer,
@@ -13,12 +15,7 @@ router.get("/", async (req, res) => {
   res.send(customers);
 });
 
-router.get("/:id", async (req, res) => {
-  const { error } = validateParams(req.params);
-  if (error) {
-    return res.status(400).send(error.message);
-  }
-
+router.get("/:id", validateId, async (req, res) => {
   const customer = await Customer.findById(req.params.id);
 
   if (!customer) {
@@ -44,12 +41,7 @@ router.post("/", auth, async (req, res) => {
 });
 
 // Put route handlers
-router.put("/:id", auth, async (req, res) => {
-  let result = validateParams(req.params);
-  if (result.error) {
-    return res.status(400).send(result.error.message);
-  }
-
+router.put("/:id", [validateId, auth], async (req, res) => {
   result = validateCustomer(req.body);
   if (result.error) {
     return res.status(400).send(result.error.message);
@@ -76,12 +68,7 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 // Delete route handler
-router.delete("/:id", auth, async (req, res) => {
-  const { error } = validateParams(req.params);
-  if (error) {
-    return res.status(400).send(error.message);
-  }
-
+router.delete("/:id", [validateId, auth], async (req, res) => {
   const id = req.params.id;
 
   const customer = await Customer.findByIdAndRemove(id);

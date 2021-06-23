@@ -1,16 +1,22 @@
 const mongoose = require("mongoose");
-const winston = require("winston");
+const config = require("config");
 
 module.exports = function () {
+  const uri =
+    "mongodb+srv://" +
+    config.get("DB_USER") +
+    ":" +
+    config.get("DB_PASS") +
+    "@cluster0.etia7.mongodb.net/" +
+    config.get("DB") +
+    "?retryWrites=true&w=majority";
+
   mongoose
-    .connect(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.etia7.mongodb.net/Vidlyd?retryWrites=true&w=majority`,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        useCreateIndex: true,
-      }
-    )
-    .then(() => winston.info("Connected to MongoDB..."));
+    .connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    })
+    .then(() => console.log(`Connected to ${config.get("DB")}...`));
 };
